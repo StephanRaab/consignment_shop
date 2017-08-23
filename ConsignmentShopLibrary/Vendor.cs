@@ -11,5 +11,11 @@ namespace ConsignmentShopLibrary
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public double Commission { get; set; }
+
+        // CONSTRUCTOR
+        public Vendor()
+        {
+            Commission = .5;
+        }
     }
 }
