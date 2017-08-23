@@ -17,6 +17,7 @@ namespace ConsignmentShopUI
         private List<Item> shoppingCartData = new List<Item>();
         BindingSource itemsBinding = new BindingSource();
         BindingSource shoppingCartBinding = new BindingSource();
+        BindingSource vendorsBinding = new BindingSource();
 
         public ConsignmentShop()
         {
@@ -36,6 +37,12 @@ namespace ConsignmentShopUI
 
             shoppingCartListBox.DisplayMember = "Display";
             shoppingCartListBox.ValueMember = "Display";
+
+            vendorsBinding.DataSource = store.Vendors;
+            vendorListBox.DataSource = vendorsBinding;
+
+            vendorListBox.DisplayMember = "Display"; // Same name, but now inside of Vendor.cs
+            vendorListBox.ValueMember = "Display";
         }
 
         private void ConsignmentShop_Load(object sender, EventArgs e)
@@ -127,6 +134,7 @@ namespace ConsignmentShopUI
             foreach (Item item in shoppingCartData)
             {
                 item.Sold = true;
+                item.Owner.PaymentDue += (decimal)item.Owner.Commission * item.Price;
             }
             // Clear the cart
             shoppingCartData.Clear();
@@ -135,6 +143,7 @@ namespace ConsignmentShopUI
 
             shoppingCartBinding.ResetBindings(false);
             itemsBinding.ResetBindings(false);
+            vendorsBinding.ResetBindings(false);
         }
     }
 }
