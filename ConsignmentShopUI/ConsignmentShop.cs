@@ -14,7 +14,9 @@ namespace ConsignmentShopUI
     public partial class ConsignmentShop : Form
     {
         private Store store = new Store();
+        private List<Item> shoppingCartData = new List<Item>();
         BindingSource itemsBinding = new BindingSource();
+        BindingSource shoppingCartBinding = new BindingSource();
 
         public ConsignmentShop()
         {
@@ -22,12 +24,18 @@ namespace ConsignmentShopUI
             SetupData();
 
             // BIND
-            itemsBinding.DataSource = store.Items;
+            itemsBinding.DataSource = store.Items.Where(x => x.Sold == false).ToList(); // lambda expression filter --> for every item in list(x)  where x.sold = false
             itemsListBox.DataSource = itemsBinding;
 
             // DISPLAY
             itemsListBox.DisplayMember = "Display"; // display property from Item.cs
             itemsListBox.ValueMember = "Display";
+
+            shoppingCartBinding.DataSource = shoppingCartData;
+            shoppingCartListBox.DataSource = shoppingCartBinding;
+
+            shoppingCartListBox.DisplayMember = "Display";
+            shoppingCartListBox.ValueMember = "Display";
         }
 
         private void ConsignmentShop_Load(object sender, EventArgs e)
@@ -63,8 +71,8 @@ namespace ConsignmentShopUI
 
             //store.Vendors.Add(demoVendor);
 
-            store.Vendors.Add(new Vendor { FirstName = "Bill", LastName = "O'Really"});
-            store.Vendors.Add(new Vendor { FirstName = "Sue", LastName = "Jones"});
+            store.Vendors.Add(new Vendor { FirstName = "Bill", LastName = "O'Really" });
+            store.Vendors.Add(new Vendor { FirstName = "Sue", LastName = "Jones" });
             store.Vendors.Add(new Vendor { FirstName = "Jack", LastName = "Bauer", Commission = 0.6 }); //if you want to override the default
 
             store.Items.Add(new Item
@@ -87,7 +95,7 @@ namespace ConsignmentShopUI
             {
                 Title = "The Underground Railroad",
                 Description = "Cora is a slave on a cotton plantation in Georgia. Life is hell for all the slaves, but especially bad for Cora; an outcast even among her fellow Africans, she is coming into womanhood—where even greater pain awaits. When Caesar, a recent arrival from Virginia, tells her about the Underground Railroad, they decide to take a terrifying risk and escape. Matters do not go as planned—Cora kills a young white boy who tries to capture her. Though they manage to find a station and head north, they are being hunted.In Whitehead’s ingenious conception, the Underground Railroad is no mere metaphor—engineers and conductors operate a secret network of tracks and tunnels beneath the Southern soil.Cora and Caesar’s first stop is South Carolina, in a city that initially seems like a haven.But the city’s placid surface masks an insidious scheme designed for its black denizens.And even worse: Ridgeway, the relentless slave catcher, is close on their heels.Forced to flee again, Cora embarks on a harrowing flight, state by state, seeking true freedom.",
-                Price = 17.9M,
+                Price = 17.90M,
                 Owner = store.Vendors[1]
             });
 
@@ -100,6 +108,33 @@ namespace ConsignmentShopUI
             });
 
             store.Name = "Second to Last";
+        }
+
+        private void addToCart_Click(object sender, EventArgs e)
+        {
+            // Figure out what is selected from the items list
+            Item selectedItem = (Item)itemsListBox.SelectedItem;
+
+            // Copy item to shopping cart list
+            shoppingCartData.Add(selectedItem);
+
+            shoppingCartBinding.ResetBindings(false);
+        }
+
+        private void makePurchase_Click(object sender, EventArgs e)
+        {
+            // Mark each item in the cart as sold
+            foreach (Item item in shoppingCartData)
+            {
+                item.Sold = true;
+            }
+            // Clear the cart
+            shoppingCartData.Clear();
+
+            itemsBinding.DataSource = store.Items.Where(x => x.Sold == false).ToList();
+
+            shoppingCartBinding.ResetBindings(false);
+            itemsBinding.ResetBindings(false);
         }
     }
 }
