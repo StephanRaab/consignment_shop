@@ -14,11 +14,20 @@ namespace ConsignmentShopUI
     public partial class ConsignmentShop : Form
     {
         private Store store = new Store();
+        BindingSource itemsBinding = new BindingSource();
 
         public ConsignmentShop()
         {
             InitializeComponent();
             SetupData();
+
+            // BIND
+            itemsBinding.DataSource = store.Items;
+            itemsListBox.DataSource = itemsBinding;
+
+            // DISPLAY
+            itemsListBox.DisplayMember = "Display"; // display property from Item.cs
+            itemsListBox.ValueMember = "Display";
         }
 
         private void ConsignmentShop_Load(object sender, EventArgs e)
