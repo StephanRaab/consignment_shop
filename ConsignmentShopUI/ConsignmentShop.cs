@@ -18,6 +18,7 @@ namespace ConsignmentShopUI
         BindingSource itemsBinding = new BindingSource();
         BindingSource shoppingCartBinding = new BindingSource();
         BindingSource vendorsBinding = new BindingSource();
+        private decimal storeProfit = 0;
 
         public ConsignmentShop()
         {
@@ -135,6 +136,7 @@ namespace ConsignmentShopUI
             {
                 item.Sold = true;
                 item.Owner.PaymentDue += (decimal)item.Owner.Commission * item.Price;
+                storeProfit += (1 - (decimal)item.Owner.Commission) * item.Price;
             }
             // Clear the cart
             shoppingCartData.Clear();
@@ -144,6 +146,8 @@ namespace ConsignmentShopUI
             shoppingCartBinding.ResetBindings(false);
             itemsBinding.ResetBindings(false);
             vendorsBinding.ResetBindings(false);
+
+            storeProfitValue.Text = string.Format("{0:C2}", storeProfit); // Format decimal value to currency with 2 decimals
         }
     }
 }
